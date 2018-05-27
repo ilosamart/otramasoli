@@ -1,0 +1,5 @@
+.idea
+venv
+**/*.sqlite
+celerybeat-schedule
+credentials.json
