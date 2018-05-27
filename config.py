@@ -12,7 +12,7 @@ enable_utc = True
 
 beat_schedule = {
     'telegram_polling': {
-        'task': 'tasks.first_task.telegram_polling',
+        'task': 'tasks.telegram_polling',
         'schedule': 5.0,
         # 'args': (16, 16),
     },

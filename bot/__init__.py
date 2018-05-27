@@ -5,8 +5,8 @@ import telepot
 from telepot.routing import (by_content_type, make_content_type_routing_table,
                              lower_key, by_chat_command, make_routing_table,by_regex)
 
-from celeryconfig import telegram
-from googlespreadsheet.budget import wks
+from config import telegram
+from googlespreadsheet import wks
 
 
 class CommandHandler(object):
