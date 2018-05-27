@@ -7,7 +7,7 @@ This is a little bot to:
 
 ## How it works
 
-Currently this bot is a composed of:
+Currently this bot is composed of:
 * Celery worker and beat scheduler
 * Telegram Bot
 * Google Spreadsheet
