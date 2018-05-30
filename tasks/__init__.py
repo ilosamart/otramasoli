@@ -10,7 +10,7 @@ CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND','file:///tmp/')
 BROKER_URL = os.getenv('BROKER_URL','pyamqp://guest@localhost//')
 
 app = Celery('tasks')
-app.config_from_object('celeryconfig')
+app.config_from_object('config')
 
 
 @app.task(bind=True)
