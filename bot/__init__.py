@@ -6,7 +6,7 @@ from telepot.routing import (by_content_type, make_content_type_routing_table,
                              lower_key, by_chat_command, make_routing_table,by_regex)
 
 from config import telegram
-from googlespreadsheet import wks
+from googlespreadsheet import *
 
 
 class CommandHandler(object):
@@ -23,6 +23,9 @@ class CommandHandler(object):
         aluguel = 'aluguel'
         net = 'net'
         outro = 'outro'
+        nubank = 'nubank'
+        visa = 'visa'
+        beleza = 'beleza'
 
     """
     Sample message
@@ -43,8 +46,17 @@ class CommandHandler(object):
     def _remove_command_from_message(self, msg):
         return ' '.join(msg['text'].split(' ')[1:])
 
-    def _registra_despesa(self, valor=0.0, tipo=None, data=date.today()):
-        wks.append_row([data.strftime('%Y-%m'), tipo, valor])
+    def _registra_despesa(self, valor=0.0, tipo=None, data=date.today(), autor=''):
+        gc = gspread.authorize(credentials)
+
+        sps = gc.open_by_url(budget_spreadsheet)
+
+        # sps.add_worksheet('2018-05', 1, 3)
+
+        # sps.add_worksheet('2018-06', 1, 3)
+
+        wks = sps.worksheet('2018-06')
+        wks.append_row([data.strftime('%Y-%m'), tipo, valor, autor])
 
     def on_start(self, msg):
         self._reply_with_thinking_time(msg, self._template_messages['welcome'])
@@ -64,22 +76,49 @@ class CommandHandler(object):
         self.on_invalid_text(msg)
 
     def on_refeicao(self, msg):
-        self._registra_despesa(valor=self._remove_command_from_message(msg), tipo=CommandHandler.TipoDespesa.refeicao)
+        self._registra_despesa(valor=self._remove_command_from_message(msg),
+                               tipo=CommandHandler.TipoDespesa.refeicao,
+                               autor=msg['from']['first_name'])
 
     def on_lazer(self, msg):
-        self._registra_despesa(0, CommandHandler.TipoDespesa.lazer)
+        self._registra_despesa(valor=self._remove_command_from_message(msg),
+                               tipo=CommandHandler.TipoDespesa.lazer,
+                               autor=msg['from']['first_name'])
 
     def on_luiz(self, msg):
-        self._registra_despesa(0, CommandHandler.TipoDespesa.luiz)
+        self._registra_despesa(valor=self._remove_command_from_message(msg),
+                               tipo=CommandHandler.TipoDespesa.luiz,
+                               autor=msg['from']['first_name'])
 
     def on_aluguel(self, msg):
-        self._registra_despesa(0, CommandHandler.TipoDespesa.aluguel)
+        self._registra_despesa(valor=self._remove_command_from_message(msg),
+                               tipo=CommandHandler.TipoDespesa.aluguel,
+                               autor=msg['from']['first_name'])
 
     def on_net(self, msg):
-        self._registra_despesa(0, CommandHandler.TipoDespesa.net)
+        self._registra_despesa(valor=self._remove_command_from_message(msg),
+                               tipo=CommandHandler.TipoDespesa.net,
+                               autor=msg['from']['first_name'])
 
     def on_outro(self, msg):
-        self._registra_despesa(0, CommandHandler.TipoDespesa.outro)
+        self._registra_despesa(valor=self._remove_command_from_message(msg),
+                               tipo=CommandHandler.TipoDespesa.outro,
+                               autor=msg['from']['first_name'])
+
+    def on_nubank(self, msg):
+        self._registra_despesa(valor=self._remove_command_from_message(msg),
+                               tipo=CommandHandler.TipoDespesa.nubank,
+                               autor=msg['from']['first_name'])
+
+    def on_visa(self, msg):
+        self._registra_despesa(valor=self._remove_command_from_message(msg),
+                               tipo=CommandHandler.TipoDespesa.visa,
+                               autor=msg['from']['first_name'])
+
+    def on_beleza(self, msg):
+        self._registra_despesa(valor=self._remove_command_from_message(msg),
+                               tipo=CommandHandler.TipoDespesa.beleza,
+                               autor=msg['from']['first_name'])
 
 
 class MeuBot(telepot.Bot, telepot.helper.DefaultRouterMixin):
@@ -98,6 +137,8 @@ class MeuBot(telepot.Bot, telepot.helper.DefaultRouterMixin):
                        'aluguel',
                        'net',
                        'outro',
+                       'nubank',
+                       'visa',
                        ((None,), self.command_handler.on_invalid_text),
                        (None, self.command_handler.on_invalid_command),
                    ])
